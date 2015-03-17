@@ -1,9 +1,13 @@
 package se.kth.mikaele3.sheepcounter;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 
 public class SignInActivity extends ActionBarActivity {
@@ -35,5 +39,15 @@ public class SignInActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void login(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        EditText editText = (EditText) findViewById(R.id.suppliedUsername);
+        String username = editText.getText().toString();
+        intent.putExtra("se.kth.mikaele3.sheepcounter.USERNAME", username);
+        startActivity(intent);
+
     }
 }
