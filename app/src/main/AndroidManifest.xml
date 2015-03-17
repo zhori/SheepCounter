@@ -8,9 +8,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".ListViewActivity"
             android:label="@string/app_name" >
-
         </activity>
         <activity
             android:name=".SignInActivity"
@@ -20,6 +19,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".HeadcountActivity"
+            android:label="@string/title_activity_headcount"
+            android:parentActivityName=".ListViewActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="se.kth.mikaele3.sheepcounter.ListViewActivity" />
         </activity>
     </application>
 

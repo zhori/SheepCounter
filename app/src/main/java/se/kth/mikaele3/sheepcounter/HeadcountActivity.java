@@ -1,26 +1,24 @@
 package se.kth.mikaele3.sheepcounter;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
 
 
-public class SignInActivity extends ActionBarActivity {
+public class HeadcountActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_headcount);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_sign_in, menu);
+        getMenuInflater().inflate(R.menu.menu_headcount, menu);
         return true;
     }
 
@@ -37,14 +35,5 @@ public class SignInActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void login(View view) {
-        Intent intent = new Intent(this, ListViewActivity.class);
-        EditText editText = (EditText) findViewById(R.id.suppliedUsername);
-        String username = editText.getText().toString();
-        intent.putExtra("se.kth.mikaele3.sheepcounter.USERNAME", username);
-        startActivity(intent);
-
     }
 }
