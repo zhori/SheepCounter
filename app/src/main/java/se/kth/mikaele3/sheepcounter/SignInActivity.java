@@ -5,25 +5,22 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 
-public class MainActivity extends ActionBarActivity {
+public class SignInActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // display the username
-        Intent intent = getIntent();
-
+        setContentView(R.layout.activity_sign_in);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_sign_in, menu);
         return true;
     }
 
@@ -40,5 +37,14 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void login(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        EditText editText = (EditText) findViewById(R.id.suppliedUsername);
+        String username = editText.getText().toString();
+        intent.putExtra("se.kth.mikaele3.sheepcounter.USERNAME", username);
+        startActivity(intent);
+
     }
 }
