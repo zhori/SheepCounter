@@ -1,6 +1,5 @@
 package se.kth.mikaele3.sheepcounter;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ public class SignInActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,7 +38,6 @@ public class SignInActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
     public void login(View view) {
         Intent intent = new Intent(this, MainActivity.class);
