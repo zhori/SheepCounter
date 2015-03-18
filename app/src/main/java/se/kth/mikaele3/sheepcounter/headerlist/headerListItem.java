@@ -9,7 +9,7 @@ import android.view.View;
  *
  * Created by Mikael on 2015-03-17.
  */
-public interface headerListItem {
+public interface HeaderListItem {
 
     public enum ItemType {
         LIST_ITEM, HEADER_ITEM
@@ -21,9 +21,6 @@ public interface headerListItem {
     public int getViewType();
 
     /**
-     *
-     * @param inflater
-     * @param convertView
      * @return the view for this item
      */
     public View getView(LayoutInflater inflater, View convertView);
