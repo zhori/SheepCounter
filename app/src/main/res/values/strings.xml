@@ -11,6 +11,6 @@
     <string name="title_activity_headcount">HeadcountActivity</string>
     <string name="join">Join</string>
     <string name="create">new</string>
-    <string name="join_text">Join the latest headcount for this list</string>
-    <string name="create_text">Create new new headcount for this list</string>
+    <string name="join_text">Join the latest headcount for the list:</string>
+    <string name="create_text">Create a new headcount for the list:</string>
 </resources>

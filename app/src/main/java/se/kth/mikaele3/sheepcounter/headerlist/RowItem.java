@@ -42,4 +42,8 @@ public class RowItem implements HeaderListItem {
 
         return view;
     }
+
+    public String getName() {
+        return name;
+    }
 }
