@@ -9,6 +9,8 @@
     tools:context="se.kth.mikaele3.sheepcounter.ListViewActivity">
 
     <ListView
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
         android:id="@+id/animalLists"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

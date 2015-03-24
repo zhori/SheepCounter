@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SheepCounter</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="headcount_title">Headcount Title</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_sign_in">Sign In</string>
     <string name="username">Username</string>
@@ -13,4 +13,10 @@
     <string name="create">new</string>
     <string name="join_text">Join the latest headcount for the list:</string>
     <string name="create_text">Create a new headcount for the list:</string>
+    <string name="title_activity_animal_info">AnimalInfoActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="info_title">Info Title</string>
+    <string name="title_activity_animal_family">AnimalFamilyActivity</string>
+    <string name="animal_family_title">Animal Family Title</string>
 </resources>

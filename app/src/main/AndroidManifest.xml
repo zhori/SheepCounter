@@ -28,6 +28,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="se.kth.mikaele3.sheepcounter.ListViewActivity" />
         </activity>
+        <activity
+            android:name=".AnimalInfoActivity"
+            android:label="@string/title_activity_animal_info" >
+            android:parentActivityName=".HeadcountActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="se.kth.mikaele3.sheepcounter.HeadcountActivity" />
+        </activity>
+        <activity
+            android:name=".AnimalFamilyActivity"
+            android:label="@string/title_activity_animal_family"
+            android:parentActivityName=".HeadcountActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="se.kth.mikaele3.sheepcounter.HeadcountActivity" />
+        </activity>
     </application>
 
 </manifest>

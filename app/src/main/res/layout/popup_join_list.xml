@@ -15,7 +15,7 @@
 
 
         <TextView
-
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/join_text" />
@@ -24,7 +24,7 @@
             android:id="@+id/popup_animal_list_name1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ffff7f1d"
+            android:textColor="#ff000000"
             android:text="Animal List"
             android:textStyle="bold"/>
 
@@ -49,7 +49,7 @@
 
 
         <TextView
-
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/create_text" />
@@ -58,7 +58,7 @@
             android:id="@+id/popup_animal_list_name2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ffff7f1d"
+            android:textColor="#ff000000"
             android:text="Animal List"
             android:textStyle="bold"/>
 
