@@ -40,7 +40,7 @@ public class ListViewActivity extends ActionBarActivity {
         fetchLists();
 
 
-        adapter = new HeaderListArrayAdapter(this, new ArrayList<HeaderListItem>(items));
+        adapter = new HeaderListArrayAdapter(this, new ArrayList<>(items));
         listView = (ListView) findViewById(R.id.animalLists);
         listView.setAdapter(adapter);
 
@@ -60,7 +60,7 @@ public class ListViewActivity extends ActionBarActivity {
 
     private void fetchLists() {
         // TODO hardcoded example to be removed, should fetch data from database
-        items = new ArrayList<HeaderListItem>();
+        items = new ArrayList<>();
         items.add(new HeaderItem("Farm 1"));
         items.add(new RowItem("Animal list 1", "last completed at"));
         items.add(new RowItem("Animal list 2", "Last completed at"));
@@ -109,7 +109,7 @@ public class ListViewActivity extends ActionBarActivity {
     /**
      * Creates a new headcount for the given list.
      *
-     * @param listID
+     * @param listID The id of the list to create a headcount of.
      * @return the ID of the created headcount.
      */
     private String createNewHeadcount(String listID) {
@@ -141,16 +141,17 @@ public class ListViewActivity extends ActionBarActivity {
     private void synchronize() {
         adapter.clear();
         fetchLists();
-        adapter.addAll(new ArrayList<HeaderListItem>(items));
+        adapter.addAll(new ArrayList<>(items));
         adapter.notifyDataSetChanged();
     }
 
     public void popupJoinHeadcountClicked(View view) {
-        if(latestClickedHeadcount != null)
-         launchHeadcountActivity(latestClickedHeadcount);
+        if (latestClickedHeadcount != null)
+            launchHeadcountActivity(latestClickedHeadcount);
     }
+
     public void popupNewHeadcountClicked(View view) {
-        if(latestClickedList != null) {
+        if (latestClickedList != null) {
             String headcountID = createNewHeadcount(latestClickedList);
             launchHeadcountActivity(headcountID);
         }

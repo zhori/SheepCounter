@@ -10,7 +10,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import se.kth.mikaele3.sheepcounter.animalList.AnimalArrayAdapter;
 import se.kth.mikaele3.sheepcounter.animalList.AnimalItem;
@@ -34,7 +33,7 @@ public class HeadcountActivity extends ActionBarActivity {
 
         fetchAnimals();
 
-        adapter = new AnimalArrayAdapter(this, new ArrayList<AnimalItem>(animals));
+        adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals));
         listView = (ListView) findViewById(R.id.animalList);
         listView.setAdapter(adapter);
 
@@ -91,7 +90,7 @@ public class HeadcountActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public ListView getListView(){
+    public ListView getListView() {
         return this.listView;
     }
 
@@ -101,21 +100,21 @@ public class HeadcountActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void hideChecked(View view){
+    public void hideChecked(View view) {
         adapter.clear();
         ArrayList<AnimalItem> nonCheckedAnimals = new ArrayList<>();
 
-        for(AnimalItem animalItem : animals){
-            if(!animalItem.isChecked())
+        for (AnimalItem animalItem : animals) {
+            if (!animalItem.isChecked())
                 nonCheckedAnimals.add(animalItem);
         }
         adapter.addAll(nonCheckedAnimals);
         adapter.notifyDataSetChanged();
     }
 
-    public void showAll(View view){
+    public void showAll(View view) {
         adapter.clear();
-        adapter.addAll(new ArrayList<AnimalItem>(animals));
+        adapter.addAll(new ArrayList<>(animals));
         adapter.notifyDataSetChanged();
     }
 }

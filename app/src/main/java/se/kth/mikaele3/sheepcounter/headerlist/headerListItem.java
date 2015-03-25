@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Interface for items in to be contained within a list,
  * where each item either is a row (data entry) or a header.
- *
+ * <p/>
  * Created by Mikael on 2015-03-17.
  */
 public interface HeaderListItem {
@@ -24,9 +24,6 @@ public interface HeaderListItem {
      * @return the view for this item
      */
     public View getView(LayoutInflater inflater, View convertView);
-
-
-
 
 
 }

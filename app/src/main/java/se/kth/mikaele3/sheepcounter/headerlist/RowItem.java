@@ -7,6 +7,9 @@ import android.widget.TextView;
 import se.kth.mikaele3.sheepcounter.R;
 
 /**
+ * A RowItem represents a row in a list with headers, compared to the HeaderItem which represents
+ * a header. They are both used by the HeaderListArrayAdapter.
+ *
  * Created by Mikael on 2015-03-18.
  */
 public class RowItem implements HeaderListItem {
@@ -14,7 +17,7 @@ public class RowItem implements HeaderListItem {
     private final String name;
     private final String lastCompletedCount;
 
-    public RowItem(String name, String lastCompletedCount){
+    public RowItem(String name, String lastCompletedCount) {
         this.name = name;
         this.lastCompletedCount = lastCompletedCount;
     }
@@ -27,7 +30,7 @@ public class RowItem implements HeaderListItem {
     @Override
     public View getView(LayoutInflater inflater, View convertView) {
         View view;
-        if(convertView == null){
+        if (convertView == null) {
             view = inflater.inflate(R.layout.row_item, null);
         } else {
             view = convertView;

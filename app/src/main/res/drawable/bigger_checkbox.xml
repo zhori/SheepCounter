@@ -2,7 +2,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_checked="true" android:drawable="@drawable/check51" />
-    <item android:state_checked="false" android:drawable="@drawable/blank31" />
+    <item android:state_checked="true" android:drawable="@drawable/checkbox_checked" />
+    <item android:state_checked="false" android:drawable="@drawable/checkbox_empty" />
 
 </selector>

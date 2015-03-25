@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -16,6 +15,9 @@ import se.kth.mikaele3.sheepcounter.HeadcountActivity;
 import se.kth.mikaele3.sheepcounter.R;
 
 /**
+ * AnimalArrayAdapter serves as an ArrayAdapter for a ListView that displays a list of animals,
+ * handling the clicks on the different elements representing one animal.
+ *
  * Created by Mikael on 2015-03-23.
  */
 public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
@@ -31,10 +33,10 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
     /**
      * Construct a new AnimalArrayAdapter given its context and items to hold.
      *
-     * @param context
-     * @param items
+     * @param context the context of the adapter
+     * @param items the items to be contained in the adapter
      */
-    public AnimalArrayAdapter(Context context, List<AnimalItem> items){
+    public AnimalArrayAdapter(Context context, List<AnimalItem> items) {
 
         super(context, 0, items);
         headcountActivity = (HeadcountActivity) context;
@@ -44,10 +46,10 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder holder = null;
+        ViewHolder holder;
         AnimalItem animalItem = getItem(position);
 
-        if(convertView ==null){
+        if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.headcount_list_item, parent, false);
 
             holder = new ViewHolder();
@@ -55,8 +57,8 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
             holder.checkBox.setOnCheckedChangeListener(animalOnCheckedChangeListener);
             holder.animalName = (TextView) convertView.findViewById(R.id.animalName);
 
-            ((ImageView) convertView.findViewById(R.id.familyButton)).setOnClickListener(familyButtonListener);
-            ((ImageView) convertView.findViewById(R.id.infoButton)).setOnClickListener(infoButtonListener);
+            (convertView.findViewById(R.id.familyButton)).setOnClickListener(familyButtonListener);
+            (convertView.findViewById(R.id.infoButton)).setOnClickListener(infoButtonListener);
 
             convertView.setTag(holder);
 
