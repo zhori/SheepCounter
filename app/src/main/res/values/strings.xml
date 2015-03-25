@@ -19,4 +19,5 @@
     <string name="info_title">Info Title</string>
     <string name="title_activity_animal_family">AnimalFamilyActivity</string>
     <string name="animal_family_title">Animal Family Title</string>
+    <string name="action_synchronize">Synchronize</string>
 </resources>
