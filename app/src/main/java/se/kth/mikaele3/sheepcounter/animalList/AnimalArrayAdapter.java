@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import se.kth.mikaele3.sheepcounter.HeadcountActivity;
 import se.kth.mikaele3.sheepcounter.R;
-import se.kth.mikaele3.sheepcounter.headerlist.HeaderListItem;
 
 /**
  * Created by Mikael on 2015-03-23.

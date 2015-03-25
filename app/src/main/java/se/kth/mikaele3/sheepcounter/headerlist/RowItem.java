@@ -4,8 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import se.kth.mikaele3.sheepcounter.R;
 
 /**
