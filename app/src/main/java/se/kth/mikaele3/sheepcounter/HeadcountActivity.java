@@ -14,7 +14,6 @@ import java.util.List;
 
 import se.kth.mikaele3.sheepcounter.animalList.AnimalArrayAdapter;
 import se.kth.mikaele3.sheepcounter.animalList.AnimalItem;
-import se.kth.mikaele3.sheepcounter.headerlist.HeaderListArrayAdapter;
 
 
 public class HeadcountActivity extends ActionBarActivity {
@@ -22,17 +21,28 @@ public class HeadcountActivity extends ActionBarActivity {
     private ListView listView;
     private AnimalArrayAdapter adapter;
     private ArrayList<AnimalItem> animals;
+    private String headcountID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_headcount);
         Intent intent = getIntent();
-        String headcountID = intent.getStringExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID");
+        headcountID = intent.getStringExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID");
         TextView textView = (TextView) findViewById(R.id.headcountTitle);
         textView.setText(headcountID);
 
-        animals = new ArrayList<AnimalItem>();
+        fetchAnimals();
+
+        adapter = new AnimalArrayAdapter(this, new ArrayList<AnimalItem>(animals));
+        listView = (ListView) findViewById(R.id.animalList);
+        listView.setAdapter(adapter);
+
+    }
+
+    private void fetchAnimals() {
+        //TODO hardcoded data, should be fetched from database/model
+        animals = new ArrayList<>();
         animals.add(new AnimalItem("name1", false));
         animals.add(new AnimalItem("name2", false));
         animals.add(new AnimalItem("name3", true));
@@ -45,34 +55,34 @@ public class HeadcountActivity extends ActionBarActivity {
         animals.add(new AnimalItem("name10", false));
         animals.add(new AnimalItem("name11", false));
         animals.add(new AnimalItem("name12", true));
-
-        adapter = new AnimalArrayAdapter(this, (List<AnimalItem>) animals.clone());
-        listView = (ListView) findViewById(R.id.animalList);
-        listView.setAdapter(adapter);
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_headcount, menu);
+        // Inflate the Action bar, add the synchronization item
+        getMenuInflater().inflate(R.menu.synchronization_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sync) {
+            synchronize();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Synchronize the current headcount with the model, updating the list shown,
+     * setting the show status to show all.
+     */
+    private void synchronize() {
+        // TODO send the current list to the database
+        fetchAnimals();
+        showAll(null);
     }
 
     public void launchAnimalInfoActivity(AnimalItem animal) {
@@ -105,7 +115,7 @@ public class HeadcountActivity extends ActionBarActivity {
 
     public void showAll(View view){
         adapter.clear();
-        adapter.addAll((java.util.Collection<? extends AnimalItem>) animals.clone());
+        adapter.addAll(new ArrayList<AnimalItem>(animals));
         adapter.notifyDataSetChanged();
     }
 }

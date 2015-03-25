@@ -30,21 +30,17 @@ public class ListViewActivity extends ActionBarActivity {
     private PopupWindow popupWindow;
     private String latestClickedHeadcount;
     private String latestClickedList;
+    private List<HeaderListItem> items;
+    private HeaderListArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
+        fetchLists();
 
-        // TODO hardcoded example to be removed
-        List<HeaderListItem> items = new ArrayList<HeaderListItem>();
-        items.add(new HeaderItem("Farm 1"));
-        items.add(new RowItem("Animal list 1", "last completed at"));
-        items.add(new RowItem("Animal list 2", "Last completed at"));
-        items.add(new HeaderItem("Farm 2"));
-        items.add(new RowItem("Animal list 1", "Last completed at"));
-        items.add(new RowItem("Animal list 2", "Last completed at"));
-        HeaderListArrayAdapter adapter = new HeaderListArrayAdapter(this, items);
+
+        adapter = new HeaderListArrayAdapter(this, new ArrayList<HeaderListItem>(items));
         listView = (ListView) findViewById(R.id.animalLists);
         listView.setAdapter(adapter);
 
@@ -60,6 +56,17 @@ public class ListViewActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    private void fetchLists() {
+        // TODO hardcoded example to be removed, should fetch data from database
+        items = new ArrayList<HeaderListItem>();
+        items.add(new HeaderItem("Farm 1"));
+        items.add(new RowItem("Animal list 1", "last completed at"));
+        items.add(new RowItem("Animal list 2", "Last completed at"));
+        items.add(new HeaderItem("Farm 2"));
+        items.add(new RowItem("Animal list 1", "Last completed at"));
+        items.add(new RowItem("Animal list 2", "Last completed at"));
     }
 
     /**
@@ -113,24 +120,29 @@ public class ListViewActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Inflate the Action bar, add the synchronization item
+        getMenuInflater().inflate(R.menu.synchronization_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sync) {
+            synchronize();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * synchronize the list of lists with the model, updating the shown lists.
+     */
+    private void synchronize() {
+        adapter.clear();
+        fetchLists();
+        adapter.addAll(new ArrayList<HeaderListItem>(items));
+        adapter.notifyDataSetChanged();
     }
 
     public void popupJoinHeadcountClicked(View view) {
