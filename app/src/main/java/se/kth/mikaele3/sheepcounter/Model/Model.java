@@ -40,12 +40,19 @@ public final class Model {
     public synchronized boolean checkUsername(String username, ConnectivityManager connectivityManager) throws IOException, JSONException {
         JSONObject jsonObject;
         boolean result = false;
-        // Check if there is a connection available
+        String request = "does_user_exist?username=" + username;
+        jsonObject = performHttpRequest(request, connectivityManager);
+        result = jsonObject.getBoolean("result");
+        return result;
+    }
+
+    private JSONObject performHttpRequest(String request, ConnectivityManager connectivityManager) throws IOException, JSONException {
+        JSONObject jsonObject;// Check if there is a connection available
         if(checkConnection(connectivityManager)){
 
             InputStream inputStream = null;
             try {
-                URL url = new URL(SERVERURL + "does_user_exist?username=" + username);
+                URL url = new URL(SERVERURL + request);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(10000 /* milliseconds */);
                 connection.setConnectTimeout(15000 /* milliseconds */);
@@ -66,8 +73,7 @@ public final class Model {
         } else {
             throw  new IOException("No connection available");
         }
-        result = jsonObject.getBoolean("result");
-        return result;
+        return jsonObject;
     }
 
     private boolean checkConnection(ConnectivityManager connectivityManager) {
