@@ -76,7 +76,7 @@ public class SignInActivity extends ActionBarActivity {
             boolean result = false;
             String message;
             try {
-                result = Model.getInstance().checkUsername(username, connectivityManager);
+                result = Model.getInstance().checkUsername(username);
                 if (!result)
                     message = "Invalid login, please try again!";
                 else {

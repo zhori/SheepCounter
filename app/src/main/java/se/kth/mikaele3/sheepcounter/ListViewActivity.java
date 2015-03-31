@@ -24,22 +24,30 @@ import se.kth.mikaele3.sheepcounter.headerlist.HeaderListItem;
 import se.kth.mikaele3.sheepcounter.headerlist.RowItem;
 
 
-public class ListViewActivity extends ActionBarActivity {
+public class ListViewActivity extends ActionBarActivity implements AsyncTaskListener {
+
+    private String username;
 
     private ListView listView;
     private PopupWindow popupWindow;
     private String latestClickedHeadcount;
     private String latestClickedList;
+
     private List<HeaderListItem> items;
     private HeaderListArrayAdapter adapter;
+    private fetchListsTask fetchListsTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Intent intent = getIntent();
+        username = intent.getStringExtra("se.kth.mikaele3.sheepcounter.USERNAME");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
-        fetchLists();
-
-
+        this.items = new ArrayList<>();
+        items.add(new HeaderItem("Updating ..."));
+        updateLists();
         adapter = new HeaderListArrayAdapter(this, new ArrayList<>(items));
         listView = (ListView) findViewById(R.id.animalLists);
         listView.setAdapter(adapter);
@@ -58,15 +66,9 @@ public class ListViewActivity extends ActionBarActivity {
 
     }
 
-    private void fetchLists() {
-        // TODO hardcoded example to be removed, should fetch data from database
-        items = new ArrayList<>();
-        items.add(new HeaderItem("Farm 1"));
-        items.add(new RowItem("Animal list 1", "last completed at"));
-        items.add(new RowItem("Animal list 2", "Last completed at"));
-        items.add(new HeaderItem("Farm 2"));
-        items.add(new RowItem("Animal list 1", "Last completed at"));
-        items.add(new RowItem("Animal list 2", "Last completed at"));
+    private void updateLists() {
+        this.fetchListsTask = new fetchListsTask(this);
+        fetchListsTask.execute(username);
     }
 
     /**
@@ -129,18 +131,14 @@ public class ListViewActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_sync) {
-            synchronize();
+            updateLists(); // fetch fresh info using async task
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * synchronize the list of lists with the model, updating the shown lists.
-     */
-    private void synchronize() {
+    private void updateAdapter() {
         adapter.clear();
-        fetchLists();
         adapter.addAll(new ArrayList<>(items));
         adapter.notifyDataSetChanged();
     }
@@ -163,5 +161,17 @@ public class ListViewActivity extends ActionBarActivity {
         intent.putExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID", headcountID);
         startActivity(intent);
 
+    }
+
+    /**
+     * After completion of the fetch lists asynchronous task this method is called and updates
+     * the adapter to the list view with new data.
+     */
+    @Override
+    public void postAsyncTask() {
+        if(fetchListsTask != null) {
+            this.items = fetchListsTask.getHeaderListItems();
+            updateAdapter();
+        }
     }
 }
