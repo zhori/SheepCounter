@@ -9,7 +9,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import se.kth.mikaele3.sheepcounter.HeadcountActivity;
 import se.kth.mikaele3.sheepcounter.R;
@@ -29,6 +32,8 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
 
     private LayoutInflater layoutInflater;
     private HeadcountActivity headcountActivity;
+    private String username;
+    private List<AnimalItem> changedCheckBoxes;
 
     /**
      * Construct a new AnimalArrayAdapter given its context and items to hold.
@@ -36,11 +41,13 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
      * @param context the context of the adapter
      * @param items the items to be contained in the adapter
      */
-    public AnimalArrayAdapter(Context context, List<AnimalItem> items) {
+    public AnimalArrayAdapter(Context context, List<AnimalItem> items, String username) {
 
         super(context, 0, items);
         headcountActivity = (HeadcountActivity) context;
         layoutInflater = LayoutInflater.from(context);
+        changedCheckBoxes = new ArrayList<>();
+        this.username = username;
     }
 
     @Override
@@ -69,6 +76,12 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
         // Changing the set status while being listened to creates an error if the view is not visible
         // when trying to get the position
         holder.checkBox.setOnCheckedChangeListener(null);
+        // if the animal is counted by another user change the graphics of the checkbox
+        if(animalItem.isCountedBySomeoneElse(username)){
+            holder.checkBox.setButtonDrawable(R.drawable.bigger_checkbox_grey);
+        } else {
+            holder.checkBox.setButtonDrawable(R.drawable.bigger_checkbox);
+        }
         holder.checkBox.setChecked(animalItem.isChecked());
         holder.checkBox.setOnCheckedChangeListener(animalOnCheckedChangeListener);
 
@@ -99,7 +112,22 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             int position = headcountActivity.getListView().getPositionForView(buttonView);
-            getItem(position).setChecked(isChecked);
+            AnimalItem animalItem = getItem(position);
+            animalItem.setChecked(isChecked);
+            // record the change of the checkbox
+            if(changedCheckBoxes.contains(animalItem)){
+                changedCheckBoxes.remove(animalItem);
+            } else {
+                changedCheckBoxes.add(animalItem);
+            }
         }
     };
+
+    public List<AnimalItem> getChangedCheckBoxes(){
+        return new ArrayList<>(changedCheckBoxes);
+    }
+
+    public void clearChangedCheckBoxes(){
+        changedCheckBoxes.clear();
+    }
 }

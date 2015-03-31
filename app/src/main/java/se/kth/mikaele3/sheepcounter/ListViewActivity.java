@@ -31,12 +31,12 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
 
     private ListView listView;
     private PopupWindow popupWindow;
-    private String latestClickedHeadcount;
+    private HeadcountMetaInfo latestClickedHeadcount;
     private String latestClickedList;
 
     private List<HeaderListItem> items;
     private HeaderListArrayAdapter adapter;
-    private fetchListsTask fetchListsTask;
+    private FetchListsTask fetchListsTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
     }
 
     private void updateLists() {
-        this.fetchListsTask = new fetchListsTask(this);
+        this.fetchListsTask = new FetchListsTask(this);
         fetchListsTask.execute(username);
     }
 
@@ -86,7 +86,7 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
             HeadcountMetaInfo headcountMetaInfo = fetchListsTask.getLatestHeadcountInfo(listID);
 
             if (headcountMetaInfo != null) {
-                latestClickedHeadcount = headcountMetaInfo.getHeadcountIdentifier();
+                latestClickedHeadcount = headcountMetaInfo;
                 latestClickedList = listID;
                 showPopupChoice(rowItem.getName(), headcountMetaInfo);
             } else {
@@ -148,20 +148,22 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
 
     public void popupJoinHeadcountClicked(View view) {
         if (latestClickedHeadcount != null)
-            launchHeadcountActivity(latestClickedHeadcount);
+            launchHeadcountActivity();
     }
 
     public void popupNewHeadcountClicked(View view) {
         if (latestClickedList != null) {
             String headcountID = createNewHeadcount(latestClickedList);
-            launchHeadcountActivity(headcountID);
+            launchHeadcountActivity();
         }
 
     }
 
-    private void launchHeadcountActivity(String headcountID) {
+    private void launchHeadcountActivity() {
         Intent intent = new Intent(this, HeadcountActivity.class);
-        intent.putExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID", headcountID);
+        intent.putExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID", latestClickedHeadcount.getHeadcountIdentifier());
+        intent.putExtra("se.kth.mikaele3.sheepcounter.LISTNAME", latestClickedList);
+        intent.putExtra("se.kth.mikaele3.sheepcounter.USERNAME", username);
         startActivity(intent);
 
     }

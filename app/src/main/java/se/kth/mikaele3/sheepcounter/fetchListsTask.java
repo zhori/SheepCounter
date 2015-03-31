@@ -23,7 +23,7 @@ import se.kth.mikaele3.sheepcounter.headerlist.RowItem;
  *
  * Created by Mikael on 2015-03-30.
  */
-public class fetchListsTask extends AsyncTask<String, Void, String> {
+public class FetchListsTask extends AsyncTask<String, Void, String> {
 
     private List<HeaderListItem> headerListItems;
     private AsyncTaskListener listener;
@@ -34,7 +34,7 @@ public class fetchListsTask extends AsyncTask<String, Void, String> {
 
     private Map<String, HeadcountMetaInfo> latestHeadcountInfo;
 
-    public fetchListsTask(AsyncTaskListener asyncTaskListener){
+    public FetchListsTask(AsyncTaskListener asyncTaskListener){
         super();
         this.listener = asyncTaskListener;
         headerListItems = new ArrayList<>();

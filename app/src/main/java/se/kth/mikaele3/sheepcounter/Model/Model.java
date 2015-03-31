@@ -130,4 +130,29 @@ public final class Model {
         }
         return headcountMetaInfo;
     }
+
+    public List<HeadcountAnimal> getHeadcount(String headcountID) throws IOException, JSONException {
+        List<HeadcountAnimal> list = new ArrayList<>();
+        String request = "get_head_count?head_count_id=" + headcountID;
+        JSONObject jsonObject = performHttpRequest(request);
+        JSONArray jsonArray = jsonObject.getJSONArray("result");
+        int length = jsonArray.length();
+        if(length == 0){
+            return null;
+        }
+        for(int i = 0; i < length; i++){
+            JSONObject animal = jsonArray.getJSONObject(i);
+            JSONArray countedByJSON = animal.getJSONArray("countedBy");
+            int numberOfCounters = countedByJSON.length();
+            List<String> countedBy = new ArrayList<>();
+
+            for(int j = 0; j < numberOfCounters; j++){
+                countedBy.add(countedByJSON.getString(j));
+            }
+            list.add(new HeadcountAnimal(animal.getString("ear_number"), animal.getString("animal_id"), countedBy));
+
+        }
+
+        return list;
+    }
 }
