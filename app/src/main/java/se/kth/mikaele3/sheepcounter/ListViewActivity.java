@@ -18,6 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.kth.mikaele3.sheepcounter.Model.HeadcountMetaInfo;
 import se.kth.mikaele3.sheepcounter.headerlist.HeaderItem;
 import se.kth.mikaele3.sheepcounter.headerlist.HeaderListArrayAdapter;
 import se.kth.mikaele3.sheepcounter.headerlist.HeaderListItem;
@@ -80,23 +81,23 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
         // check that the item is not a header item
         if (item.getViewType() == HeaderListItem.ItemType.LIST_ITEM.ordinal()) {
             RowItem rowItem = (RowItem) item;
+            String listID = rowItem.getIdentifier();
 
-            //TODO get the id from the rowItem, try to fetch the last unfinished headcount for this list
-            String headcountID = "todoID";
-            String listID = "listID";
+            HeadcountMetaInfo headcountMetaInfo = fetchListsTask.getLatestHeadcountInfo(listID);
 
-            if (!headcountID.isEmpty()) {
-                latestClickedHeadcount = headcountID;
+            if (headcountMetaInfo != null) {
+                latestClickedHeadcount = headcountMetaInfo.getHeadcountIdentifier();
                 latestClickedList = listID;
-                showPopupChoice(rowItem.getName());
+                showPopupChoice(rowItem.getName(), headcountMetaInfo);
             } else {
-                headcountID = createNewHeadcount(listID);
-                launchHeadcountActivity(headcountID);
+                //TODO
+                //headcountID = createNewHeadcount(listID);
+                //launchHeadcountActivity(headcountID);
             }
         }
     }
 
-    private void showPopupChoice(String listName) {
+    private void showPopupChoice(String listName, HeadcountMetaInfo headcountMetaInfo) {
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupLayout = inflater.inflate(R.layout.popup_join_list, null, false);
@@ -106,6 +107,8 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
         textView1.setText(listName);
         TextView textView2 = (TextView) popupLayout.findViewById(R.id.popup_animal_list_name2);
         textView2.setText(listName);
+        TextView textView3 = (TextView) popupLayout.findViewById(R.id.popup_started_at);
+        textView3.setText("Started at " + headcountMetaInfo.getStartTime());
     }
 
     /**
@@ -172,6 +175,12 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
         if(fetchListsTask != null) {
             this.items = fetchListsTask.getHeaderListItems();
             updateAdapter();
+        }
+    }
+
+    public void dismissPopup(View view){
+        if(popupWindow != null && popupWindow.isShowing()){
+            popupWindow.dismiss();
         }
     }
 }

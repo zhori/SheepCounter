@@ -114,4 +114,20 @@ public final class Model {
         }
         return metaInfoList;
     }
+
+    /**
+     * Return the latest headcount for the given list, or null if no headcount has been done yet.
+     */
+    public HeadcountMetaInfo getLastestHeadcountInfo(String listIdentifier) throws IOException, JSONException {
+        HeadcountMetaInfo headcountMetaInfo = null;
+        String request = "get_latest_head_count?animal_list_id=" + listIdentifier;
+        JSONObject jsonObject = performHttpRequest(request);
+        JSONArray jsonArray = jsonObject.getJSONArray("result");
+        int length = jsonArray.length();
+        if(length > 0){
+            JSONObject infoJSON = jsonArray.getJSONObject(0);
+            headcountMetaInfo = new HeadcountMetaInfo(infoJSON.getString("head_count_identifier"), infoJSON.getString("start_time"), infoJSON.getString("created_by"));
+        }
+        return headcountMetaInfo;
+    }
 }

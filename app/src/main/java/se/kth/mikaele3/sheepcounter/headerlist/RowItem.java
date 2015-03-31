@@ -16,10 +16,12 @@ public class RowItem implements HeaderListItem {
 
     private final String name;
     private final String secondaryInformation;
+    private final String identifier;
 
-    public RowItem(String name, String secondaryInformation) {
+    public RowItem(String name, String secondaryInformation, String identifier) {
         this.name = name;
         this.secondaryInformation = secondaryInformation;
+        this.identifier = identifier;
     }
 
     @Override
@@ -47,4 +49,6 @@ public class RowItem implements HeaderListItem {
     public String getName() {
         return name;
     }
+
+    public String getIdentifier() {return identifier;}
 }

@@ -1,8 +1,6 @@
 package se.kth.mikaele3.sheepcounter;
 
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 
@@ -10,8 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import se.kth.mikaele3.sheepcounter.Model.AnimalListMetaInfo;
+import se.kth.mikaele3.sheepcounter.Model.HeadcountMetaInfo;
 import se.kth.mikaele3.sheepcounter.Model.Model;
 import se.kth.mikaele3.sheepcounter.headerlist.HeaderItem;
 import se.kth.mikaele3.sheepcounter.headerlist.HeaderListItem;
@@ -28,11 +28,17 @@ public class fetchListsTask extends AsyncTask<String, Void, String> {
     private List<HeaderListItem> headerListItems;
     private AsyncTaskListener listener;
 
+    public HeadcountMetaInfo getLatestHeadcountInfo(String listID) {
+        return latestHeadcountInfo.get(listID);
+    }
+
+    private Map<String, HeadcountMetaInfo> latestHeadcountInfo;
+
     public fetchListsTask(AsyncTaskListener asyncTaskListener){
         super();
         this.listener = asyncTaskListener;
         headerListItems = new ArrayList<>();
-
+        this.latestHeadcountInfo = new HashMap<>();
     }
 
     @Override
@@ -44,6 +50,14 @@ public class fetchListsTask extends AsyncTask<String, Void, String> {
 
         try {
             metaInfoList = Model.getInstance().fetchListsMetaData(username);
+            // fetch info regarding the latest performed headcount for each list
+            for(AnimalListMetaInfo list: metaInfoList){
+                HeadcountMetaInfo headcountMetaInfo = Model.getInstance().getLastestHeadcountInfo(list.getListIdentifier());
+                if(headcountMetaInfo != null){
+                    latestHeadcountInfo.put(list.getListIdentifier(), headcountMetaInfo);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -76,7 +90,7 @@ public class fetchListsTask extends AsyncTask<String, Void, String> {
             result.add(headerItem);
             List<AnimalListMetaInfo> list = farmMap.get(farm);
             for(AnimalListMetaInfo item : list){
-                RowItem rowItem = new RowItem(item.getName(), item.getCreatedBy());
+                RowItem rowItem = new RowItem(item.getName(), item.getCreatedBy(), item.getListIdentifier());
                 result.add(rowItem);
             }
         }
@@ -90,6 +104,6 @@ public class fetchListsTask extends AsyncTask<String, Void, String> {
     }
 
     public List<HeaderListItem> getHeaderListItems() {
-        return new ArrayList<HeaderListItem>(headerListItems);
+        return new ArrayList<>(headerListItems);
     }
 }
