@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class Model {
 
-    private static final String SERVERURL = "http://41d5babe.ngrok.com/";
+    private static final String SERVERURL = "http://4565eed1.ngrok.com/";
 
     private static Model instance;
 
@@ -142,7 +142,7 @@ public final class Model {
         }
         for(int i = 0; i < length; i++){
             JSONObject animal = jsonArray.getJSONObject(i);
-            JSONArray countedByJSON = animal.getJSONArray("countedBy");
+            JSONArray countedByJSON = animal.getJSONArray("counted_by");
             int numberOfCounters = countedByJSON.length();
             List<String> countedBy = new ArrayList<>();
 

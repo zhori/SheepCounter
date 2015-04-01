@@ -99,7 +99,7 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         ArrayList<AnimalItem> nonCheckedAnimals = new ArrayList<>();
 
         for (AnimalItem animalItem : animals) {
-            if (!animalItem.isChecked())
+            if (!animalItem.isChecked() && !animalItem.isCountedBySomeoneElse(username))
                 nonCheckedAnimals.add(animalItem);
         }
         adapter.addAll(nonCheckedAnimals);
