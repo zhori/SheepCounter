@@ -15,11 +15,13 @@ import se.kth.mikaele3.sheepcounter.R;
 public class RowItem implements HeaderListItem {
 
     private final String name;
-    private final String lastCompletedCount;
+    private final String secondaryInformation;
+    private final String identifier;
 
-    public RowItem(String name, String lastCompletedCount) {
+    public RowItem(String name, String secondaryInformation, String identifier) {
         this.name = name;
-        this.lastCompletedCount = lastCompletedCount;
+        this.secondaryInformation = secondaryInformation;
+        this.identifier = identifier;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class RowItem implements HeaderListItem {
         TextView textView1 = (TextView) view.findViewById(R.id.list_content1);
         TextView textView2 = (TextView) view.findViewById(R.id.list_content2);
         textView1.setText(name);
-        textView2.setText(lastCompletedCount);
+        textView2.setText(secondaryInformation);
 
         return view;
     }
@@ -47,4 +49,6 @@ public class RowItem implements HeaderListItem {
     public String getName() {
         return name;
     }
+
+    public String getIdentifier() {return identifier;}
 }

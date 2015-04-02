@@ -12,6 +12,15 @@
         android:textSize="25sp"
         android:textColor="@color/primary_material_dark"
         android:id="@+id/headcountTitle"/>
+    <TextView
+        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/informationString"
+        android:text="@string/info"
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/headcountTitle"
+        />
 
     <ListView
         android:layout_above="@+id/buttons"
@@ -44,6 +53,7 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:onClick="closeHeadcount"
             android:text="Finish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

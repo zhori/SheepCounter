@@ -1,6 +1,7 @@
 package se.kth.mikaele3.sheepcounter;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,17 +11,30 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import se.kth.mikaele3.sheepcounter.animalList.AnimalArrayAdapter;
 import se.kth.mikaele3.sheepcounter.animalList.AnimalItem;
 
 
-public class HeadcountActivity extends ActionBarActivity {
+
+
+public class HeadcountActivity extends ActionBarActivity implements AsyncTaskListener {
 
     private ListView listView;
+    private TextView information;
     private AnimalArrayAdapter adapter;
-    private ArrayList<AnimalItem> animals;
+    private List<AnimalItem> animals;
     private String headcountID;
+    private String listName;
+    private String username;
+
+    private boolean syncInProgress;
+    private boolean closeInProgress;
+
+
+    private FetchHeadcountTask fetchHeadcountTask;
+    private CloseHeadcountTask closeHeadcountTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,34 +42,22 @@ public class HeadcountActivity extends ActionBarActivity {
         setContentView(R.layout.activity_headcount);
         Intent intent = getIntent();
         headcountID = intent.getStringExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID");
+        listName = intent.getStringExtra("se.kth.mikaele3.sheepcounter.LISTNAME");
+        username = intent.getStringExtra("se.kth.mikaele3.sheepcounter.USERNAME");
         TextView textView = (TextView) findViewById(R.id.headcountTitle);
-        textView.setText(headcountID);
-
-        fetchAnimals();
-
-        adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals));
-        listView = (ListView) findViewById(R.id.animalList);
-        listView.setAdapter(adapter);
-
+        textView.setText(listName);
+        // perform an async task to update the animal list
+        syncInProgress = true;
+        closeInProgress = false;
+        information = (TextView) findViewById(R.id.informationString);
+        information.setText("Updating ...");
+        updateAnimals(new ArrayList<AnimalItem>());
     }
 
-    private void fetchAnimals() {
-        //TODO hardcoded data, should be fetched from database/model
-        animals = new ArrayList<>();
-        animals.add(new AnimalItem("name1", false));
-        animals.add(new AnimalItem("name2", false));
-        animals.add(new AnimalItem("name3", true));
-        animals.add(new AnimalItem("name4", false));
-        animals.add(new AnimalItem("name5", false));
-        animals.add(new AnimalItem("name6", true));
-        animals.add(new AnimalItem("name7", false));
-        animals.add(new AnimalItem("name8", false));
-        animals.add(new AnimalItem("name9", true));
-        animals.add(new AnimalItem("name10", false));
-        animals.add(new AnimalItem("name11", false));
-        animals.add(new AnimalItem("name12", true));
+    private void updateAnimals(List<AnimalItem> updatedAnimals) {
+        fetchHeadcountTask = new FetchHeadcountTask(this, username, updatedAnimals);
+        fetchHeadcountTask.execute(headcountID);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,23 +77,35 @@ public class HeadcountActivity extends ActionBarActivity {
     }
 
     /**
+     * @return the main listView of this activity.
+     */
+    public ListView getListView() {
+        return this.listView;
+    }
+
+    /**
      * Synchronize the current headcount with the model, updating the list shown,
      * setting the show status to show all.
      */
     private void synchronize() {
-        // TODO send the current list to the database
-        fetchAnimals();
-        showAll(null);
+        if(!syncInProgress) {
+            information.setText("Updating ...");
+            List<AnimalItem> updatedAnimals = new ArrayList<>();
+            if(adapter != null) {
+                updatedAnimals.addAll(adapter.getChangedCheckBoxes());
+                adapter.clearChangedCheckBoxes();
+            }
+            // use adapter to get changed animal list items
+            // clear the adapters changed checkboxes
+            // send them in the async task
+            updateAnimals(updatedAnimals);
+        }
     }
 
     public void launchAnimalInfoActivity(AnimalItem animal) {
         Intent intent = new Intent(this, AnimalInfoActivity.class);
         intent.putExtra("se.kth.mikaele3.sheepcounter.ANIMAL", animal.getName());
         startActivity(intent);
-    }
-
-    public ListView getListView() {
-        return this.listView;
     }
 
     public void launchAnimalFamilyActivity(AnimalItem animal) {
@@ -105,7 +119,7 @@ public class HeadcountActivity extends ActionBarActivity {
         ArrayList<AnimalItem> nonCheckedAnimals = new ArrayList<>();
 
         for (AnimalItem animalItem : animals) {
-            if (!animalItem.isChecked())
+            if (!animalItem.isChecked() && !animalItem.isCountedBySomeoneElse(username))
                 nonCheckedAnimals.add(animalItem);
         }
         adapter.addAll(nonCheckedAnimals);
@@ -113,8 +127,62 @@ public class HeadcountActivity extends ActionBarActivity {
     }
 
     public void showAll(View view) {
+        updateAdapter();
+    }
+
+    private void updateAdapter() {
         adapter.clear();
         adapter.addAll(new ArrayList<>(animals));
         adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Called when the asynchronous task of updating the animal list has been completed,
+     * to reflect the changes of the model upon the view.
+     */
+    @Override
+    public void postAsyncTask(AsyncTask asyncTask) {
+        if (asyncTask instanceof FetchHeadcountTask) {
+            if(!fetchHeadcountTask.isProcessFailed()) {
+                this.animals = fetchHeadcountTask.getAnimals();
+                // Create a new adapter if this is the first synchronization
+                if (this.adapter == null) {
+                    adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals), username);
+                    listView = (ListView) findViewById(R.id.animalList);
+                    listView.setAdapter(adapter);
+                } else {
+                    updateAdapter();
+                }
+
+                if (fetchHeadcountTask.isHeadcountFinished()) {
+                    information.setText("Headcount finished.");
+                } else {
+                    information.setText("Sync complete!");
+                }
+            } else {
+                // synchronization failed, display message
+                information.setText(fetchHeadcountTask.getFailMessage());
+            }
+            syncInProgress = false;
+        }
+     if(asyncTask instanceof CloseHeadcountTask){
+         if(closeHeadcountTask.isProcessFailed()){
+             information.setText("Finishing failed");
+         } else {
+             information.setText("Headcount now finished.");
+         }
+
+     }
+
+    }
+
+    public void closeHeadcount(View view){
+        if(!closeInProgress){
+            closeInProgress = true;
+            information.setText("Finishing ...");
+            closeHeadcountTask = new CloseHeadcountTask(this);
+            closeHeadcountTask.execute(headcountID);
+        }
+
     }
 }

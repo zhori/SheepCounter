@@ -27,6 +27,11 @@
             android:textColor="#ff000000"
             android:text="Animal List"
             android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/popup_started_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/startedAt"/>
 
         <Button
             android:id="@+id/join_headcount"
@@ -70,7 +75,16 @@
             android:text="@string/create"
             android:onClick="popupNewHeadcountClicked"/>
 
+        <Button
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:onClick="dismissPopup"/>
+
 
     </LinearLayout>
+
+
 
 </LinearLayout>

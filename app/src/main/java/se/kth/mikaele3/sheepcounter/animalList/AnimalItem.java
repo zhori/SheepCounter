@@ -1,5 +1,7 @@
 package se.kth.mikaele3.sheepcounter.animalList;
 
+import java.util.List;
+
 /**
  * An AnimalItem represents one animal to be used by an AnimalArrayAdapter.
  *
@@ -8,16 +10,23 @@ package se.kth.mikaele3.sheepcounter.animalList;
 public class AnimalItem {
 
     private final String name;
+    private final String animalID;
+    private final List<String> countedBy;
     private boolean checked;
 
-    public AnimalItem(String name, boolean checked) {
+    public AnimalItem(String name, String animalID, List<String> countedBy, boolean checked) {
         this.name = name;
         this.checked = checked;
+        this.animalID = animalID;
+        this.countedBy = countedBy;
+
     }
 
     public String getName() {
         return name;
     }
+
+    public String getAnimalID() {return animalID;}
 
     public boolean isChecked() {
         return checked;
@@ -25,5 +34,16 @@ public class AnimalItem {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public boolean isCountedBySomeoneElse(String username){
+
+        if(countedBy.isEmpty())
+            return false;
+
+        if(countedBy.contains(username) && countedBy.size() == 1)
+            return false;
+
+        return true;
     }
 }
