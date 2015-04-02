@@ -29,9 +29,12 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
     private String listName;
     private String username;
 
-    private boolean synchInProgress;
+    private boolean syncInProgress;
+    private boolean closeInProgress;
+
 
     private FetchHeadcountTask fetchHeadcountTask;
+    private CloseHeadcountTask closeHeadcountTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +47,9 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         TextView textView = (TextView) findViewById(R.id.headcountTitle);
         textView.setText(listName);
         // perform an async task to update the animal list
-        synchInProgress = true;
-        TextView information = (TextView) findViewById(R.id.informationString);
+        syncInProgress = true;
+        closeInProgress = false;
+        information = (TextView) findViewById(R.id.informationString);
         information.setText("Updating ...");
         updateAnimals(new ArrayList<AnimalItem>());
     }
@@ -84,10 +88,13 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
      * setting the show status to show all.
      */
     private void synchronize() {
-        if(!synchInProgress) {
+        if(!syncInProgress) {
             information.setText("Updating ...");
-            List<AnimalItem> updatedAnimals = adapter.getChangedCheckBoxes();
-            adapter.clearChangedCheckBoxes();
+            List<AnimalItem> updatedAnimals = new ArrayList<>();
+            if(adapter != null) {
+                updatedAnimals.addAll(adapter.getChangedCheckBoxes());
+                adapter.clearChangedCheckBoxes();
+            }
             // use adapter to get changed animal list items
             // clear the adapters changed checkboxes
             // send them in the async task
@@ -156,8 +163,26 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
                 // synchronization failed, display message
                 information.setText(fetchHeadcountTask.getFailMessage());
             }
-            synchInProgress = false;
+            syncInProgress = false;
         }
+     if(asyncTask instanceof CloseHeadcountTask){
+         if(closeHeadcountTask.isProcessFailed()){
+             information.setText("Finishing failed");
+         } else {
+             information.setText("Headcount now finished.");
+         }
+
+     }
+
     }
 
+    public void closeHeadcount(View view){
+        if(!closeInProgress){
+            closeInProgress = true;
+            information.setText("Finishing ...");
+            closeHeadcountTask = new CloseHeadcountTask(this);
+            closeHeadcountTask.execute(headcountID);
+        }
+
+    }
 }

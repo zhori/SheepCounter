@@ -196,4 +196,9 @@ public final class Model {
         headcountID = result.getString("head_count_id");
         return headcountID;
     }
+
+    public void finishHeadcount(String headcountID) throws IOException, JSONException {
+        String request = "close_head_count?head_count_id=" + headcountID;
+        performHttpRequest(request);
+    }
 }

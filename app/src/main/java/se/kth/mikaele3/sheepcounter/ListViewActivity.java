@@ -77,6 +77,13 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateLists(); // try to update the lists
+
+    }
+
     private void updateLists() {
         if(!syncInProgress) {
             information.setText("Updating ...");
@@ -163,6 +170,7 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
 
     public void popupJoinHeadcountClicked(View view) {
         if (latestClickedHeadcount != null)
+            dismissPopup(null);
             launchHeadcountActivity(latestClickedHeadcount.getHeadcountIdentifier());
     }
 
