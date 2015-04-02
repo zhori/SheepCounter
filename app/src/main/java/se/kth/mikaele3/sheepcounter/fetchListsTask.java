@@ -100,7 +100,7 @@ public class FetchListsTask extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-        listener.postAsyncTask();
+        listener.postAsyncTask(this);
     }
 
     public List<HeaderListItem> getHeaderListItems() {

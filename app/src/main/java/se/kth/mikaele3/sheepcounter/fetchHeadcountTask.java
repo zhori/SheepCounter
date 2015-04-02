@@ -21,11 +21,35 @@ public class FetchHeadcountTask extends AsyncTask<String, Void, String>  {
     private AsyncTaskListener listener;
     private List<AnimalItem> animals;
     private String username;
+    private List<AnimalItem> updatedAnimals;
+    private boolean isFinished;
 
-    public FetchHeadcountTask(AsyncTaskListener asyncTaskListener, String username){
+    private boolean processFailed;
+    private String failMessage;
+
+
+
+    public FetchHeadcountTask(AsyncTaskListener asyncTaskListener, String username, List<AnimalItem> updatedAnimals){
         super();
         this.listener = asyncTaskListener;
         this.username = username;
+        this.updatedAnimals = updatedAnimals;
+        isFinished = false;
+        processFailed = false;
+        failMessage = "";
+    }
+
+    public boolean isHeadcountFinished() {
+        return isFinished;
+    }
+
+
+    public String getFailMessage() {
+        return failMessage;
+    }
+
+    public boolean isProcessFailed() {
+        return processFailed;
     }
 
     @Override
@@ -34,10 +58,22 @@ public class FetchHeadcountTask extends AsyncTask<String, Void, String>  {
         List<HeadcountAnimal> headcountAnimals = new ArrayList<>();
 
         try {
+            // check if the given headcount is considered finished
+            isFinished = Model.getInstance().isFinished(headcountID);
+
+            // send updates to model
+            for(AnimalItem animalToUpdate : updatedAnimals){
+                Model.getInstance().updateHeadcount(username, animalToUpdate.getAnimalID(), headcountID, animalToUpdate.isChecked());
+            }
+            // get the full data set from the model
             headcountAnimals = Model.getInstance().getHeadcount(headcountID);
         } catch (IOException e) {
+            processFailed = true;
+            failMessage = "Connection Error";
             e.printStackTrace();
         } catch (JSONException e) {
+            processFailed = true;
+            failMessage = "Format Error";
             e.printStackTrace();
         }
 
@@ -47,13 +83,19 @@ public class FetchHeadcountTask extends AsyncTask<String, Void, String>  {
             result.add(new AnimalItem(animal.getName(), animal.getAnimalID(), animal.getCountedBy(), checked));
         }
         this.animals = result;
+
+        if(animals.isEmpty()){
+            processFailed = true;
+            failMessage = "No animals found";
+        }
+
         return null;
     }
 
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-        listener.postAsyncTask();
+        listener.postAsyncTask(this);
     }
 
     public List<AnimalItem> getAnimals() {

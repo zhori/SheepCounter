@@ -1,5 +1,7 @@
 package se.kth.mikaele3.sheepcounter;
 
+import android.os.AsyncTask;
+
 /**
  * An AsyncTaskListener implements a method that can be used by an Asynchronous task to call when it is finished,
  * which can be used to inform listeners of the results of the task.
@@ -8,5 +10,5 @@ package se.kth.mikaele3.sheepcounter;
  */
 public interface AsyncTaskListener {
 
-    public void postAsyncTask();
+    public void postAsyncTask(AsyncTask asyncTask);
 }

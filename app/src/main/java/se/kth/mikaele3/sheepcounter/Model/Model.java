@@ -138,7 +138,7 @@ public final class Model {
         JSONArray jsonArray = jsonObject.getJSONArray("result");
         int length = jsonArray.length();
         if(length == 0){
-            return null;
+            return list;
         }
         for(int i = 0; i < length; i++){
             JSONObject animal = jsonArray.getJSONObject(i);
@@ -154,5 +154,46 @@ public final class Model {
         }
 
         return list;
+    }
+
+    public void updateHeadcount(String username, String animalID, String headcountID, boolean checked) throws IOException, JSONException {
+        int checkedNumber;
+        if(checked)
+            checkedNumber = 1;
+        else
+            checkedNumber = 0;
+
+        String request = "update_head_count_record?username=" + username + "&animal_id=" + animalID + "&head_count_id=" + headcountID + "&counted=" + checkedNumber;
+        performHttpRequest(request);
+    }
+
+    public boolean isFinished(String headcountID) throws IOException, JSONException {
+
+        String request = "is_head_count_open?head_count_id=" + headcountID;
+        JSONObject jsonObject = performHttpRequest(request);
+        int number = jsonObject.getInt("result");
+        if(number == 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Tries to create a new headcount for the given list by the given user.
+     *
+     * @param listID the id of the list to start a new headcount for
+     * @param username the user which started the headcount
+     * @return the id for the new headcount
+     * @throws IOException if a connection could not be established
+     * @throws JSONException if the received data was in wrong format
+     */
+    public String newHeadcount(String listID, String username) throws IOException, JSONException {
+        String headcountID = null;
+        String request = "start_new_head_count?animal_list_id=" + listID + "&username=" + username;
+        JSONObject jsonObject = performHttpRequest(request);
+        JSONObject result = jsonObject.getJSONObject("result");
+        headcountID = result.getString("head_count_id");
+        return headcountID;
     }
 }

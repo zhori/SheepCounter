@@ -2,6 +2,7 @@ package se.kth.mikaele3.sheepcounter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -30,6 +31,7 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
     private String username;
 
     private ListView listView;
+    private TextView information;
     private PopupWindow popupWindow;
     private HeadcountMetaInfo latestClickedHeadcount;
     private String latestClickedList;
@@ -37,6 +39,10 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
     private List<HeaderListItem> items;
     private HeaderListArrayAdapter adapter;
     private FetchListsTask fetchListsTask;
+    private NewHeadcountTask newHeadcountTask;
+
+    private boolean syncInProgress;
+    private boolean newHeadcountInProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,11 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
         this.items = new ArrayList<>();
-        items.add(new HeaderItem("Updating ..."));
+        information = (TextView) findViewById(R.id.listViewInformationString);
+
+        //Try to fetch lists information from the model
+        syncInProgress = false;
+        newHeadcountInProgress = false;
         updateLists();
         adapter = new HeaderListArrayAdapter(this, new ArrayList<>(items));
         listView = (ListView) findViewById(R.id.animalLists);
@@ -68,8 +78,12 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
     }
 
     private void updateLists() {
-        this.fetchListsTask = new FetchListsTask(this);
-        fetchListsTask.execute(username);
+        if(!syncInProgress) {
+            information.setText("Updating ...");
+            syncInProgress = true;
+            this.fetchListsTask = new FetchListsTask(this);
+            fetchListsTask.execute(username);
+        }
     }
 
     /**
@@ -90,9 +104,7 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
                 latestClickedList = listID;
                 showPopupChoice(rowItem.getName(), headcountMetaInfo);
             } else {
-                //TODO
-                //headcountID = createNewHeadcount(listID);
-                //launchHeadcountActivity(headcountID);
+                createNewHeadcount(listID);
             }
         }
     }
@@ -115,11 +127,14 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
      * Creates a new headcount for the given list.
      *
      * @param listID The id of the list to create a headcount of.
-     * @return the ID of the created headcount.
      */
-    private String createNewHeadcount(String listID) {
-        //TODO create new headcount for the given list
-        return "TODO";
+    private void createNewHeadcount(String listID) {
+        if(!newHeadcountInProgress){
+            newHeadcountInProgress = true;
+            information.setText("Creating new headcount ...");
+            newHeadcountTask = new NewHeadcountTask(this);
+            newHeadcountTask.execute(listID, username);
+        }
     }
 
 
@@ -148,20 +163,21 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
 
     public void popupJoinHeadcountClicked(View view) {
         if (latestClickedHeadcount != null)
-            launchHeadcountActivity();
+            launchHeadcountActivity(latestClickedHeadcount.getHeadcountIdentifier());
     }
 
     public void popupNewHeadcountClicked(View view) {
         if (latestClickedList != null) {
-            String headcountID = createNewHeadcount(latestClickedList);
-            launchHeadcountActivity();
+            dismissPopup(null);
+            createNewHeadcount(latestClickedList);
+
         }
 
     }
 
-    private void launchHeadcountActivity() {
+    private void launchHeadcountActivity(String headcountID) {
         Intent intent = new Intent(this, HeadcountActivity.class);
-        intent.putExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID", latestClickedHeadcount.getHeadcountIdentifier());
+        intent.putExtra("se.kth.mikaele3.sheepcounter.HEADCOUNTID", headcountID);
         intent.putExtra("se.kth.mikaele3.sheepcounter.LISTNAME", latestClickedList);
         intent.putExtra("se.kth.mikaele3.sheepcounter.USERNAME", username);
         startActivity(intent);
@@ -169,15 +185,29 @@ public class ListViewActivity extends ActionBarActivity implements AsyncTaskList
     }
 
     /**
-     * After completion of the fetch lists asynchronous task this method is called and updates
-     * the adapter to the list view with new data.
+     * After completion of a an asynchronous task this method is called and handles necessary updates to the view.
      */
     @Override
-    public void postAsyncTask() {
-        if(fetchListsTask != null) {
-            this.items = fetchListsTask.getHeaderListItems();
-            updateAdapter();
+    public void postAsyncTask(AsyncTask asyncTask) {
+        if(asyncTask instanceof FetchListsTask) {
+            if (fetchListsTask != null) {
+                this.items = fetchListsTask.getHeaderListItems();
+                updateAdapter();
+            }
+            information.setText("Sync complete");
+            syncInProgress = false;
         }
+        if(asyncTask instanceof NewHeadcountTask){
+            if(!newHeadcountTask.didCreationFail()){
+                String headcountID = newHeadcountTask.getHeadcountID();
+                information.setText("Creation complete");
+                launchHeadcountActivity(headcountID);
+            } else {
+                information.setText("Creation failed");
+            }
+            newHeadcountInProgress = false;
+        }
+
     }
 
     public void dismissPopup(View view){

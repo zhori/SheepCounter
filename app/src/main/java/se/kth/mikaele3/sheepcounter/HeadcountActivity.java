@@ -1,6 +1,7 @@
 package se.kth.mikaele3.sheepcounter;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,14 +17,19 @@ import se.kth.mikaele3.sheepcounter.animalList.AnimalArrayAdapter;
 import se.kth.mikaele3.sheepcounter.animalList.AnimalItem;
 
 
+
+
 public class HeadcountActivity extends ActionBarActivity implements AsyncTaskListener {
 
     private ListView listView;
+    private TextView information;
     private AnimalArrayAdapter adapter;
     private List<AnimalItem> animals;
     private String headcountID;
     private String listName;
     private String username;
+
+    private boolean synchInProgress;
 
     private FetchHeadcountTask fetchHeadcountTask;
 
@@ -38,11 +44,14 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         TextView textView = (TextView) findViewById(R.id.headcountTitle);
         textView.setText(listName);
         // perform an async task to update the animal list
-        updateAnimals();
+        synchInProgress = true;
+        TextView information = (TextView) findViewById(R.id.informationString);
+        information.setText("Updating ...");
+        updateAnimals(new ArrayList<AnimalItem>());
     }
 
-    private void updateAnimals() {
-        fetchHeadcountTask = new FetchHeadcountTask(this, username);
+    private void updateAnimals(List<AnimalItem> updatedAnimals) {
+        fetchHeadcountTask = new FetchHeadcountTask(this, username, updatedAnimals);
         fetchHeadcountTask.execute(headcountID);
     }
 
@@ -75,11 +84,15 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
      * setting the show status to show all.
      */
     private void synchronize() {
-        // TODO send the current list to the database
-        // use adapter to get changed animal list items
-        // clear the adapters changed checkboxes
-        // send them in the async task
-        updateAnimals();
+        if(!synchInProgress) {
+            information.setText("Updating ...");
+            List<AnimalItem> updatedAnimals = adapter.getChangedCheckBoxes();
+            adapter.clearChangedCheckBoxes();
+            // use adapter to get changed animal list items
+            // clear the adapters changed checkboxes
+            // send them in the async task
+            updateAnimals(updatedAnimals);
+        }
     }
 
     public void launchAnimalInfoActivity(AnimalItem animal) {
@@ -121,17 +134,30 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
      * to reflect the changes of the model upon the view.
      */
     @Override
-    public void postAsyncTask() {
+    public void postAsyncTask(AsyncTask asyncTask) {
+        if (asyncTask instanceof FetchHeadcountTask) {
+            if(!fetchHeadcountTask.isProcessFailed()) {
+                this.animals = fetchHeadcountTask.getAnimals();
+                // Create a new adapter if this is the first synchronization
+                if (this.adapter == null) {
+                    adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals), username);
+                    listView = (ListView) findViewById(R.id.animalList);
+                    listView.setAdapter(adapter);
+                } else {
+                    updateAdapter();
+                }
 
-        this.animals = fetchHeadcountTask.getAnimals();
-        // Create a new adapter if this is the first synchronization
-        if(this.adapter == null){
-            adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals), username);
-            listView = (ListView) findViewById(R.id.animalList);
-            listView.setAdapter(adapter);
-        } else {
-            updateAdapter();
+                if (fetchHeadcountTask.isHeadcountFinished()) {
+                    information.setText("Headcount finished.");
+                } else {
+                    information.setText("Sync complete!");
+                }
+            } else {
+                // synchronization failed, display message
+                information.setText(fetchHeadcountTask.getFailMessage());
+            }
+            synchInProgress = false;
         }
-
     }
+
 }

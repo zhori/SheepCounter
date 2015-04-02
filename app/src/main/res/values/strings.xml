@@ -22,4 +22,5 @@
     <string name="action_synchronize">Synchronize</string>
     <string name="startedAt">started at xx-xx-xxxx</string>
     <string name="cancel">Cancel</string>
+    <string name="info">information</string>
 </resources>
