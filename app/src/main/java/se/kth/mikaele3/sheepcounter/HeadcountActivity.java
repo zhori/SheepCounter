@@ -88,7 +88,6 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
             List<AnimalItem> updatedAnimals = new ArrayList<>();
             if(adapter != null) {
                 updatedAnimals.addAll(adapter.getChangedCheckBoxes());
-                adapter.clearChangedCheckBoxes();
             }
             // use adapter to get changed animal list items
             // clear the adapters changed checkboxes
@@ -140,6 +139,7 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
     public void postAsyncTask(AsyncTask asyncTask) {
         if (asyncTask instanceof FetchHeadcountTask) {
             if(!fetchHeadcountTask.isProcessFailed()) {
+                adapter.clearChangedCheckBoxes();
                 this.animals = fetchHeadcountTask.getAnimals();
                 // Create a new adapter if this is the first synchronization
                 if (this.adapter == null) {
