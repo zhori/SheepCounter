@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class Model {
 
-    private static final String SERVERURL = "http://4565eed1.ngrok.com/";
+    private static final String SERVERURL = "http://61cf371c.ngrok.com/";
 
     private static Model instance;
 
