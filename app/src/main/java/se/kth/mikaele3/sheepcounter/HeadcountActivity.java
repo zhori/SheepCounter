@@ -47,16 +47,10 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         TextView textView = (TextView) findViewById(R.id.headcountTitle);
         textView.setText(listName);
         // perform an async task to update the animal list
-        syncInProgress = true;
+        syncInProgress = false;
         closeInProgress = false;
         information = (TextView) findViewById(R.id.informationString);
-        information.setText("Updating ...");
-        updateAnimals(new ArrayList<AnimalItem>());
-    }
-
-    private void updateAnimals(List<AnimalItem> updatedAnimals) {
-        fetchHeadcountTask = new FetchHeadcountTask(this, username, updatedAnimals);
-        fetchHeadcountTask.execute(headcountID);
+        synchronize();
     }
 
     @Override
@@ -89,6 +83,7 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
      */
     private void synchronize() {
         if(!syncInProgress) {
+            syncInProgress = true;
             information.setText("Updating ...");
             List<AnimalItem> updatedAnimals = new ArrayList<>();
             if(adapter != null) {
@@ -98,7 +93,8 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
             // use adapter to get changed animal list items
             // clear the adapters changed checkboxes
             // send them in the async task
-            updateAnimals(updatedAnimals);
+            fetchHeadcountTask = new FetchHeadcountTask(this, username, updatedAnimals);
+            fetchHeadcountTask.execute(headcountID);
         }
     }
 
@@ -153,7 +149,6 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
                 } else {
                     updateAdapter();
                 }
-
                 if (fetchHeadcountTask.isHeadcountFinished()) {
                     information.setText("Headcount finished.");
                 } else {
