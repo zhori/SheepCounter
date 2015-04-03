@@ -67,6 +67,12 @@ public class FetchHeadcountTask extends AsyncTask<String, Void, String>  {
             }
             // get the full data set from the model
             headcountAnimals = Model.getInstance().getHeadcount(headcountID);
+
+            if(headcountAnimals.isEmpty()){
+                processFailed = true;
+                failMessage = "No animals found";
+            }
+
         } catch (IOException e) {
             processFailed = true;
             failMessage = "Connection Error";
@@ -83,12 +89,6 @@ public class FetchHeadcountTask extends AsyncTask<String, Void, String>  {
             result.add(new AnimalItem(animal.getName(), animal.getAnimalID(), animal.getCountedBy(), checked));
         }
         this.animals = result;
-
-        if(animals.isEmpty()){
-            processFailed = true;
-            failMessage = "No animals found";
-        }
-
         return null;
     }
 
