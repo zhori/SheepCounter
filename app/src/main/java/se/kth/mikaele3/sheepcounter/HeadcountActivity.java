@@ -139,7 +139,6 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
     public void postAsyncTask(AsyncTask asyncTask) {
         if (asyncTask instanceof FetchHeadcountTask) {
             if(!fetchHeadcountTask.isProcessFailed()) {
-                adapter.clearChangedCheckBoxes();
                 this.animals = fetchHeadcountTask.getAnimals();
                 // Create a new adapter if this is the first synchronization
                 if (this.adapter == null) {
@@ -147,6 +146,7 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
                     listView = (ListView) findViewById(R.id.animalList);
                     listView.setAdapter(adapter);
                 } else {
+                    adapter.clearChangedCheckBoxes();
                     updateAdapter();
                 }
                 if (fetchHeadcountTask.isHeadcountFinished()) {
@@ -180,4 +180,6 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         }
 
     }
+
+
 }
