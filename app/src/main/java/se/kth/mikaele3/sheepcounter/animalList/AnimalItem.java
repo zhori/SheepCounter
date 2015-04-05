@@ -1,5 +1,6 @@
 package se.kth.mikaele3.sheepcounter.animalList;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * Created by Mikael on 2015-03-23.
  */
-public class AnimalItem {
+public class AnimalItem implements Serializable{
 
     private final String name;
     private final String animalID;

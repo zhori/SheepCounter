@@ -34,6 +34,7 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
     private HeadcountActivity headcountActivity;
     private String username;
     private List<AnimalItem> changedCheckBoxes;
+    private final String headcountId;
 
     /**
      * Construct a new AnimalArrayAdapter given its context and items to hold.
@@ -41,13 +42,14 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
      * @param context the context of the adapter
      * @param items the items to be contained in the adapter
      */
-    public AnimalArrayAdapter(Context context, List<AnimalItem> items, String username) {
+    public AnimalArrayAdapter(Context context, List<AnimalItem> items, String username,String headcountID) {
 
         super(context, 0, items);
         headcountActivity = (HeadcountActivity) context;
         layoutInflater = LayoutInflater.from(context);
         changedCheckBoxes = new ArrayList<>();
         this.username = username;
+        this.headcountId =headcountID;
     }
 
     @Override
@@ -126,6 +128,8 @@ public class AnimalArrayAdapter extends ArrayAdapter<AnimalItem> {
     public List<AnimalItem> getChangedCheckBoxes(){
         return new ArrayList<>(changedCheckBoxes);
     }
+
+    public String getHeadcountId(){return headcountId;}
 
     public void clearChangedCheckBoxes(){
         changedCheckBoxes.clear();

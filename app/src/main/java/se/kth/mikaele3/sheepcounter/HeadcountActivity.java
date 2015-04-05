@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,10 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
     private FetchHeadcountTask fetchHeadcountTask;
     private CloseHeadcountTask closeHeadcountTask;
 
+    private final static String KEY_SAVED_CHECKBOXES = "saved_check_boxes";
+    private final static String KEY_HEADCOUNT_ID = "key_head_count_id";
+    private static final String TAG = HeadcountActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +55,17 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
         syncInProgress = false;
         closeInProgress = false;
         information = (TextView) findViewById(R.id.informationString);
-        synchronize();
+        ArrayList<AnimalItem> savedChanges = new ArrayList<>();
+        if(savedInstanceState!=null) {
+            if (savedInstanceState.getSerializable(KEY_SAVED_CHECKBOXES) != null) {
+                if (headcountID.equals(savedInstanceState.getString(KEY_HEADCOUNT_ID))) {
+                    List<AnimalItem> serializedChanges = (List<AnimalItem>) savedInstanceState.getSerializable(KEY_SAVED_CHECKBOXES);
+                    savedChanges.addAll(serializedChanges);
+                }
+            }
+        }
+        fetchHeadcountTask = new FetchHeadcountTask(this, username, savedChanges);
+        fetchHeadcountTask.execute(headcountID);
     }
 
     @Override
@@ -142,7 +157,7 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
                 this.animals = fetchHeadcountTask.getAnimals();
                 // Create a new adapter if this is the first synchronization
                 if (this.adapter == null) {
-                    adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals), username);
+                    adapter = new AnimalArrayAdapter(this, new ArrayList<>(animals), username,headcountID);
                     listView = (ListView) findViewById(R.id.animalList);
                     listView.setAdapter(adapter);
                 } else {
@@ -179,6 +194,14 @@ public class HeadcountActivity extends ActionBarActivity implements AsyncTaskLis
             closeHeadcountTask.execute(headcountID);
         }
 
+    }
+
+    @Override
+    protected  void onSaveInstanceState(Bundle outState){
+        ArrayList<AnimalItem> changedCheckBoxes =new ArrayList<AnimalItem>(adapter.getChangedCheckBoxes());
+        outState.putString(KEY_HEADCOUNT_ID,adapter.getHeadcountId());
+        outState.putSerializable(KEY_SAVED_CHECKBOXES,changedCheckBoxes);
+        super.onSaveInstanceState(outState);
     }
 
 
